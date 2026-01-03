@@ -1,0 +1,24 @@
+{
+  "name": "placesearch",
+  "version": "0.0.1",
+  "description": "The first app of find places in somecity",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eddie Seven ( bill )",
+  "license": "ISC",
+  "type": "commonJS",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cookies-parser": "^1.2.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.3",
+    "pg": "^8.16.3"
+  }
+}

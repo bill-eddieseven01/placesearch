@@ -1,0 +1,18 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+@media screen and ( min-width: 0px ){
+    body{
+        background: #eee;
+        display: flex;
+        flex-direction: column;
+        height: 100dvh;
+        width: 100dvw;
+        justify-content: center;
+        align-items: center;
+    }
+}
+@media screen and ( max-width: 800px ){
+
+}

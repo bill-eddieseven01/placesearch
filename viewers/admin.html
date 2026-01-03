@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>painel de adiministrador</title>
+    <link rel="shortcut icon" href="./image/Location.png" type="image/x-icon">
+    <style>
+          *{
+            margin: 0;
+            padding: 0;
+            transition: 500ms;
+            z-index: 10;
+        }
+        body{
+            --bg: #eee;
+            --cl: #333;
+            --accent: linear-gradient(90deg,blue,violet);
+            background: var(--bg);
+            height: 100dvh;
+            width: 100dvw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        body:not(:has(input[name=place]:checked) ) .place:not(nav *){
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: 0.2s;
+            z-index: 0;
+            display: block;
+        }
+        @media screen and (min-width:0px){
+            body:has(#panel:checked) .login{
+                overflow: hidden;
+                transform: translateY(-50%), scale(0.2);
+                transition: 2s;
+                height: 0;
+            }
+             body:not(:has(#panel:checked) ) .panel{
+                height: 0;
+                overflow: hidden;
+                opacity: 0;
+             }
+             .login{
+                display: flex;
+                flex-direction: column;
+                width: 400px;
+                max-width: 94%;
+                justify-content: center;
+                align-items: center;
+                font-family: segoe ui;
+                transition: 1.7s;
+                position: relative;
+             }
+             h1{
+            font-size: 2em;
+            font-family: segoe ui;
+            background: var(--accent);
+            color: transparent;
+            -webkit-background-clip: text;
+            margin: 1% 0;
+           }
+           .login h2{
+            width: 100%;
+            color: #666;
+            font-size: 14pt;
+           }
+           body img{
+            height: 40pt;
+            width: 40pt;
+           }
+           .login input{
+            width: 94%;
+            padding: 2%;
+            margin: 1% 0;
+           }
+           .login button{
+            background: var(--accent);
+            color: white;
+            width: 100%;
+            padding: 2% 2%;
+            margin: 3% 0;
+           }
+           .none{display:none;}
+           .panel{
+            height: 90%;
+            width: 60%;
+            max-width: 98vw;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+           }
+           .panel header{
+            display: flex;
+            justify-content: end;
+            width: 90%;
+           }
+           .panel header button{
+            background: var(--accent);
+            border: none;
+            color: #fff;
+            padding: 1%;
+            font-size: 12pt;
+            border-radius: 4pt;
+            width: calc( max-content + 8% );
+            cursor: pointer;
+           }
+           .panel main{
+            height: 90%;
+            width: 90%;
+            border: 0.2pt solid #1071ff;
+            background: white;
+            box-shadow:  0 1pt 2pt rgba(1,1,1,0.2);
+            display: flex;
+            border-radius: 4pt;
+            flex-direction: column;
+            align-items: center;
+            margin: 1% 0;
+           }
+           .panel main:has(.info){
+            align-items: center;
+            justify-content: center;
+           }
+           .panel main .desc{
+            min-width: max-content;
+           }
+           .panel main .desc .placename{
+            width: 90%;
+           }
+            i.back{
+            color: var(--bg);
+            font-size: 18pt;
+            font-family: monospace;
+            font-style: normal;
+            transform: scale(2);
+            opacity: 0.8;
+            cursor: pointer;
+            position: absolute;
+            font-weight: 800;
+            left: -10%;
+            background: var(--accent);
+            border-radius: 50%;
+            height: 16pt;
+            width: 16pt;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+           }
+            H2{ 
+            color: transparent;
+            background: var(--accent);
+            -webkit-background-clip: text;
+            font-family: segoe ui;    
+            }
+            p.info::after{
+                content: "sem resultados encontrados";
+                color: #666;
+                font-size: 16pt;
+                font-weight: 600;
+                font-family: segoe ui;
+                transform: translateY(-50%);
+                position: relative;
+            }
+              .place{
+                width: 90%;
+                display: flex;
+                flex-direction: row;
+                min-height: max-content;
+                padding: 2% 0;
+                border: none;
+                border-bottom: 2pt solid #ccc;
+                margin: 1% 0;
+                position: relative;
+                z-index: 50;
+            }
+            .place *, nav * *{
+                animation: load 0.8s linear;
+            }
+            .place i.img{
+                background: url(./image/space.jpg) center;
+                background-size: 200% 100%;
+                height: 80pt;
+                width: 80pt;
+                border-radius: 5pt;
+                display: block;
+                position: relative;
+            }
+            .place .img .logo{
+                background: url(./image/logo.jpg) center;
+                background-size: 200% 100%;
+                height: 20pt;
+                width: 20pt;
+                border-radius: 50%;
+                position: absolute;
+                bottom: -5%;
+                left: -5%;
+                border: 2pt solid white;
+            }
+            .place div.desc{
+                width: 40%;
+                position: relative;
+                margin-left: 2%;
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+            }
+            .placename, .time{
+                font-weight: 700;
+                font-family: segoe ui;
+                font-size: 14pt;
+            }
+            .time{
+                color: #666;
+            }
+            .line{
+                width: 30%;
+                border: 1pt solid blueviolet;
+            }
+             nav.place{
+                width: 100dvw;
+                height: 100dvh;
+                position: fixed;
+                left: 0;
+                top: 0;
+                z-index:100;
+                background: var(--bg);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-y: auto;
+            }
+            nav.place header{
+                margin: 0 0 1% 0;
+                width: 736px;
+                max-width: 76%;
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+            nav.place header h2{
+                font-size: 16pt;
+                margin-left: 2%;
+            }
+            nav.place .image{
+                width: 50%;
+                min-width: 390px;
+                min-height: 21dvh;
+                border-radius: 5pt;
+                background: linear-gradient(12deg,rgba(0,0,0,0.3),rgba(0,0,0,0.3)) no-repeat, url(./image/space.jpg) bottom;
+                background-size: 100% 150%;
+            }
+            nav.place form{
+                height: max-content;
+                margin: 1% 0;
+                width: 50%;
+            }
+            nav.place form .input{
+                display: flex;
+                flex-direction: column;
+            }
+            nav.place form .input *{
+                margin: 0.25% 0;
+                font-family: segoe ui;
+                padding: 0.25%;
+            }
+            nav.place form .line{
+                border: none;
+                margin: 1% 0;
+            }
+            nav.place form .line button{
+                border: none;
+                background: var(--accent);
+                color: white;
+                padding: 3% 6%;
+                min-width: max-content;
+                border-radius: 4pt;
+            }
+            nav.place form button[type=reset]{
+                color: violet;
+                background: transparent;
+                border-color: violet;
+            }
+            i.process{
+                margin: 10% 0 0 0;
+                height: 40pt;
+                width: 40pt;
+                display: block;
+                background: url(./image/wait.png) center;
+                animation: route 0.75s linear infinite;
+                position: relative;
+            }
+             @keyframes route{
+                from{ transform: rotateZ(0deg);}
+                to{ transform: rotateZ(360deg);}
+            }
+        }
+        @media screen and (max-width:800px) {
+            .login h1{
+                text-align: center;
+            }
+            .panel{
+                width: 100%;
+            }
+            .panel *:not( .panel * * ){
+                border: none;
+                width: 98%;
+                box-shadow: none;
+            }
+            .panel main{
+                height: 98dvh;
+            }
+            nav.place *:not(nav * *){
+                width: 94%;
+            }
+            nav.place form .line{
+                width: 100%;
+            }
+             nav.place form .line button{
+                width: 100%;
+                margin: 2% 0 0 0;
+             }
+        }
+    </style>
+</head>
+<body>
+    <form class="login" onsubmit="event.preventDefault();login();return false;">
+        <img src="./image/Location.png" alt="">
+        <h1>painel de adiministrador</h1>
+            <input type="email" name="email" id="email" placeholder="digite o email" required>
+            <input type="password" name="password" id="password" placeholder="digite a senha" required>
+            <button type="submit">iniciar operação</button>
+    </form>
+    <nav class="panel">
+        <header>
+            <input type="checkbox" id="panel" class="none">
+            <button onclick="placeScreen()">+ Add place</button>
+        </header>
+        <main>
+           <i class="process"></i>
+        </main>
+    </nav>
+    <nav class="place">
+        <header>
+            <input type="checkbox" name="place" class="none" id="place">
+              <i class="back" onclick="document.querySelector('.place input:checked').click();document.querySelector('.place form button').innerHTML = 'subir update';form.r=false;"><</i>
+                <h2>PAINEL DE EDICAO DE PLACES</h2>
+        </header>
+        <label for="image" class="image">
+            <input class="none" type="file" name="image" id="image" accept="image/*" onchange="
+            const r = new FileReader(); const p = this.parentElement; r.onload = e=>p.style.background=`url(${ e.target.result })`;
+            if( this.files[0] ) r.readAsDataURL( this.files[0] ); else p.style.background='url(./image/space.jpg)'; p.style.backgroundSize='100% 100%';">
+        </label>
+        <form onsubmit="event.preventDefault();addPlace()">
+            <div class="input">
+                <label for="placename">nome do lugar</label>
+                <input class="field" required type="text" placeholder="IPASR" id="placename">
+            </div>
+             <div class="input">
+                <label for="placeType">tipologia do lugar</label>
+                <select class="field" required id="placeType">
+                    <option value="Biblioteca">Biblioteca</option>
+                    <option value="Oficina">Oficina</option>
+                    <option value="Lixeira">Lixeira</option>
+                    <option value="Hospedaria">Hospedaria</option>
+                    <option value="Restaurante">Restaurante</option>
+                    <option value="Hospital">hospital</option>
+                    <option value="Escola">Escola</option>
+                    <option value="Universidade">Universidade</option>
+                    <option value="Cyber">Cyber</option>
+                    <option value="MultiCaixa">MultiCaixa</option>
+                </select>
+            </div>
+             <div class="input">
+                <label for="logo">logo do espaço</label>
+                <input class="field"  type="file" accept="image/*" id="logo">
+            </div>
+             <div class="input">
+                <label for="location">localização do lugar</label>
+                <select class="field" required id="location">
+                    <option value="ramiros">ramiros</option>
+                    <option value="km30">km30</option>
+                    <option value="cajueiro">cajueiro</option>
+                    <option value="barra-kz">barra-kz</option>
+                    <option value="pingo-doce">pingo-doce</option>
+                </select>
+            </div>
+             <div class="input">
+                <label for="website">website do lugar</label>
+                <input class="field"  type="text" placeholder="https://..." id="website">
+            </div>
+             <div class="input">
+                <label for="whatsapp">whatsapp do lugar</label>
+                <input class="field"  type="text" placeholder="+244 9xxxx" id="whatsapp">
+            </div>
+             <div class="input">
+                <label for="email">email do lugar</label>
+                <input class="field"  type="text" placeholder="exemplo@lugar.ao" id="email">
+            </div>
+             <div class="input">
+                <label for="placedescription">descricao do lugar</label>
+                <textarea class="field" required id="placedescription"></textarea>
+            </div>
+             <div class="input">
+                <label for="services">servicos do lugar</label>
+                <textarea class="field"  id="services"></textarea>
+            </div>
+            <div class="line">
+                <button>subir update</button>
+                <button type="reset" onclick="form.r=false;">cancelar</button>
+            </div>
+        </form>
+    </nav>
+</body>
+<script>
+    fetch(location.origin+'/verify',{method:'POST'}).then(r=>r.json()).then(r=>{document.querySelector('#panel').checked=true;getPlaces()}).catch(e=>console.log('ainda sem logged...'))
+    window.when = 0
+    const form = document.querySelector('.place form')
+    form.r = false;
+    function placeScreen( n ) {
+        document.querySelector('.place input').checked = (true)
+        if ( n ){
+        form.r = true; form.id = n;
+         document.querySelector('.place label.image').style.background = `url(${location.origin+'/img/'+n})`
+         document.querySelector('.place label.image').style.backgroundSize = `100% 100%`
+         document.querySelector('.place form button').innerHTML = 'actualizar'
+         fetch(location.origin+'/place/'+n,{method:'POST'}).then(r=>r.json())
+         .then(r=>{
+            if ( !r ) return;
+            document.querySelectorAll('.place .field').forEach( e => {
+                if ( e.type != 'file' )
+                e.value = r[ e.id ]
+               })
+         })
+    }}
+    function addPlace ( ) {
+        const f = new FormData()
+        document.querySelectorAll('.place .field').forEach( e => {
+                if ( e.type != 'file' && e.value.length>3 )
+                f.append( e.id, e.value )
+                else if( e.type=='file' && e.files[0] ) f.append( e.id, e.files[0] )
+            })
+        if( form.r ) f.append('id', form.id ); fetch(location.origin+'/place',{method:'POST',body:f}).then( r=>r.json()).then( r => {
+            if ( r && r.ok ){ alert('Registrado com sucesso'); getPlaces(); document.querySelector('.place i.back').click()}
+            else alert('Erro, tente novamente!')
+        })
+    }
+
+    function getPlaces( ) {
+    fetch(location.origin+'/places',{method:'POST',headers:{'Content-Type':'application/json'},body:`{ "tag":"${ when == 0 ? undefined : when }" }`})
+  .then( r=>r.json() ).then( r=>{
+    if ( r.bug ) return document.querySelector('.panel main').innerHTML = '<p class="info"></p>'
+    listPlace( r )
+  }).catch( error=>{
+    document.querySelector('.panel main').innerHTML = '<p class="error"></p>'
+    console.error( error )
+  })
+    }
+    function listPlace ( r ) {
+    let html = '';
+    if ( r ) r.forEach( d =>{
+        if ( d ) html+=`
+        <fieldset class="place" onclick="placeScreen(${ d.placeId+`,'${d.placename}'` })">
+                    <i class="img" style="background:url(${location.origin+'/img/'+d.placeId});background-size:100% 100%;"><i style="background:url(${location.origin+'/logo/'+d.placeId});background-size:100% 100%;" class="logo"></i></i>
+                    <div class="desc">
+                        <output class="placename">${ d.placename }</output>
+                        <output class="street">${ d.location }</output>
+                        <output class="time">${ 'x' }km<sup>2</sup> distancia</output>
+                        <output class="placetype">${ d.placeType }</output>
+                    </div>
+                </fieldset>`; when = d.placeId
+    }); else document.querySelector('menu main').innerHTML = '<p class=".info"></p>'
+    document.querySelector('.panel main').innerHTML = html
+}
+  function login ( ) {
+    const data = JSON.stringify({ email: document.querySelector('.login #email').value, password: document.querySelector('.login #password').value })
+    fetch( location.origin+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:data}).then(r=>r.json()).then(r=>{
+        if ( r && r.ok ) {
+            document.querySelector('#panel').checked=true
+            getPlaces()
+        } else alert('Os dados nao estao corretos')
+    }).catch( error =>{
+        alert('Erro na conexao ao servidor!'); console.error( error )
+    })
+  }
+</script>
+</html>

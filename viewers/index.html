@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>placesearch</title>
+    <link rel="shortcut icon" href="./image/Location.png" type="image/x-icon">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            transition: 200ms;
+            z-index: 10;
+        }
+        body{
+            --bg: #eee;
+            --cl: #333;
+            --accent: linear-gradient(90deg,blue,violet);
+            background: var(--bg);
+            height: 100dvh;
+            width: 100dvw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        body:not(:has(input[name=space]:checked) ) menu.local{
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: 0.5s;
+            z-index: 0;
+            display: block;
+        }
+        body:has(input[name=space]:checked) *:not( body * *, body menu, nav ){
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            position: absolute;
+            transition: 0.3s;
+        }
+        @media screen and (min-width: 0px) {
+           h1{
+            font-size: 2em;
+            font-family: segoe ui;
+            background: var(--accent);
+            color: transparent;
+            -webkit-background-clip: text;
+            margin: 1% 0;
+           }
+           body img{
+            transform: scale(1.5);
+           }
+           .input{
+            margin: 0 0 0 1%;
+            padding: 2pt;
+            width: 736px;
+            max-width: 90%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--accent);
+            border-radius: 21pt;
+           }
+           .input input{
+             width: 100%;
+             padding: 2% 4% 2% 8%;
+             border-radius: 21pt;
+             border: 1pt solid var(--accent);
+             font-size: 12pt;
+             font-family: segoe ui;
+             outline: none;
+             caret-color: violet;
+             color: #444;
+           }
+           .input input::placeholder{
+            background: var(--accent);
+            background-size: 20% 100%;
+            color: transparent;
+            -webkit-background-clip: text;
+           }
+           .input button{
+            position: absolute;
+            border-radius: 28pt;
+            padding: 1.5% 4%;
+            border: none;
+            right: 1%;
+            background: var(--accent);
+            color: white;
+            background-size: 150% 100%;
+            cursor: pointer;
+           }
+           .input .find{
+            position: absolute;
+            height: 30pt;
+            width: 30pt;
+            border-radius: 50%;
+            background: url(./image/findoculus.png) center, var(--accent);
+            background-size: 90% 90%;
+            left: 2%;
+            z-index: 20;
+           }
+           .space{
+            display: flex;
+            width: 736px;
+            max-width: 90%;
+            margin: 2% 0;
+            justify-content: center;
+            align-items: center;
+           }
+           .space label{
+            height: 60pt;
+            width: 60pt;
+            border-radius: 50%;
+            margin: 0 2%;
+            background: var(--accent);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+           }
+           .space label img{
+            max-width: 50%;
+            max-height: 90%;
+            display: block;
+            position: relative;
+           }
+           .space label output{
+            color: #444;
+            position: absolute;
+            transform: translateY(260%);
+            width: 60pt;
+            text-align: center;
+            font-family: segoe ui;
+           }
+           .space input{
+            display: none;
+           }
+           p{
+            color: #888;
+            font-size: 12pt;
+            width: 536px;
+            max-width: 80%;
+            text-align: center;
+           }
+            body:has(input[name=space]:checked) menu.local{
+                min-height: 70dvh;
+            }
+           menu{
+            width: 736px;
+            max-width: 90%;
+            border-radius: 21pt;
+            background: var(--bg);
+            z-index: 20;
+            position: relative;
+           }
+           i.back{
+            color: var(--bg);
+            font-size: 18pt;
+            font-family: monospace;
+            font-style: normal;
+            transform: scale(2);
+            opacity: 0.8;
+            cursor: pointer;
+            position: absolute;
+            font-weight: 800;
+            left: -10%;
+            background: var(--accent);
+            border-radius: 50%;
+            height: 16pt;
+            width: 16pt;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+           }
+            i.icon{
+                height: 30pt;
+                width: 30pt;
+                background: url(./image/Closed.png) center;
+                background-size: 90% 90%;
+                display: block;
+                border: 1pt solid rgba(0, 0, 255, 0.348);
+                border-radius: 50%;
+            }
+            H2{ 
+            color: transparent;
+            background: var(--accent);
+            -webkit-background-clip: text;
+            font-family: segoe ui;    
+            }
+            menu header{
+                display: flex;
+                justify-content: start;
+                align-items: center;
+            }
+            menu header h2{
+                margin-left: 1%;
+            }
+            menu main{
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+            }
+            i.process{
+                margin: 10% 0 0 0;
+                height: 40pt;
+                width: 40pt;
+                display: block;
+                background: url(./image/wait.png) center;
+                animation: route 0.75s linear infinite;
+                position: relative;
+            }
+            menu main p.info{
+                margin: 10% 0 0 0;
+            }
+            p.info::after{
+                content: "sem resultados encontrados";
+                color: #666;
+                font-size: 16pt;
+                font-weight: 600;
+                font-family: segoe ui;
+            }
+            p.error::after{
+                content: "falha na conexão com o servidor";
+                color: #852c2c;
+                font-size: 16pt;
+                font-weight: 600;
+                font-family: segoe ui;
+            }
+            @keyframes route{
+                from{ transform: rotateZ(0deg);}
+                to{ transform: rotateZ(360deg);}
+            }
+            .place{
+                width: 98%;
+                display: flex;
+                flex-direction: row;
+                min-height: max-content;
+                padding: 2% 0;
+                border: none;
+                border-bottom: 2pt solid #bbb;
+                margin: 2% 0;
+                position: relative;
+            }
+            .place *, nav * *{
+                animation: load 0.8s linear;
+            }
+            .place i.img{
+                background: url(./image/space.jpg) center;
+                background-size: 200% 100%;
+                height: 80pt;
+                width: 80pt;
+                border-radius: 5pt;
+                display: block;
+                position: relative;
+            }
+            .place .img .logo{
+                background: url(./image/logo.jpg) center;
+                background-size: 200% 100%;
+                height: 20pt;
+                width: 20pt;
+                border-radius: 50%;
+                position: absolute;
+                bottom: -5%;
+                left: -5%;
+                border: 2pt solid white;
+            }
+            .place div.desc{
+                width: 80%;
+                position: relative;
+                margin-left: 2%;
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+            }
+            .placename, .time{
+                font-weight: 700;
+                font-family: segoe ui;
+                font-size: 14pt;
+            }
+            .time{
+                color: #666;
+            }
+            .line{
+                width: 30%;
+                border: 1pt solid blueviolet;
+            }
+            .onplace{
+                width: 100dvw;
+                height: 100dvh;
+                position: fixed;
+                left: 0;
+                top: 0;
+                z-index:100;
+                background: var(--bg);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-y: auto;
+            }
+            .onplace header{
+                margin: 2% 0;
+                width: 736px;
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+            .onplace .img{
+                background: url(./image/space.jpg) center;
+                background-size: 100% 160%;
+                position: relative;
+                display: block;
+                width: 60%;
+                min-height: 40dvh;
+                border-radius: 10pt;
+            }
+            .onplace i.back{
+            }
+            .onplace .icon{
+                background: url(./image/logo.jpg) center;
+                background-size: 100% 100%;
+                margin-right: 1%;
+            }
+            .onplace:not(:has(input:checked)){
+            height: 0;
+            width: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .onplace main{
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+        }
+        .onplace main:has(i.process, .info, .error){
+            justify-content: center;
+            align-items: center;
+        }
+        .onplace main p{
+            text-align: left;
+            min-width: 50%;
+            margin: 1% 0;
+            word-break: break-all;
+        }
+        .onplace main span{
+            font-family: calibri;
+            font-size: 14pt;
+            margin: 0.25% 0;
+            display: flex;
+        }
+        .onplace main .image{
+            height: 40%;
+            width: 30%;
+            position: absolute;
+            right: 19%;
+            bottom: 8%;
+            border-radius: 10pt;
+        }
+        }
+        footer{
+            background: var(--accent);
+            padding: 1.5% 0;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: calibri;
+        }
+        footer *:is(a){
+            margin: 0 2%;
+            font-size: 12pt;
+            color: white;
+            text-decoration: none;
+        }
+        @media screen and (max-width: 800px) {
+            h1{
+                margin: 4% 0;
+            }
+            .input{
+                margin: 2% 0;
+            }
+            .input input{
+                padding: 3% 2% 3% 13%;
+            }
+            .input button{
+                right: 2%;
+                height: 80%;
+                background-size: 100% 100%;
+            }
+            .space{
+                flex-wrap: wrap;
+                flex-basis: 29%;
+            }
+            footer{
+                height: 10pt;
+            }
+            footer *{
+                display: none;
+            }
+            menu{
+                width: 100dvw;
+                height: 100dvh;
+            }
+            h2{
+                font-size: 14pt;
+                width: 84%;
+            }
+            i.back{
+                position: relative;
+                left: -2%;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            .onplace *:not(nav * * ){
+                width: 94%;
+            }
+            .onplace .img{
+                width: 98%;
+                height: 30%;
+                margin-top: 4%;
+            }
+             .onplace main p{
+                min-width: 100%;
+                margin: 4% 0;
+        }
+         .onplace main .image{
+                position: relative;
+                right: auto;
+                bottom: auto;
+                width: 100%;
+                height: 400px;
+         }
+          main .desc{
+            min-width: max-content;
+           }
+            main .desc .placename{
+            width: 90%;
+           }
+        }
+        label[for=search]{
+            position: absolute;
+            overflow: hidden;
+            height: 0;
+            width: 0;
+            opacity: 0;
+        }
+        @keyframes load {
+            from{opacity:0;transform:translateY(50%);}
+            to{opacity:1;transform:translateY(0);}
+        }
+        .none{ display: none; }
+    </style>
+</head>
+<body>
+    <img src="./image/Location.png" alt="">
+            <H1>placesearch</H1>
+        <div class="input">
+            <i class="find"></i>
+            <input type="search" onkeyup="if (!(event.key.toUpperCase()=='ENTER' && this.value.length>3 )) return true;
+             document.querySelector('label[for=search] output').innerHTML = `'${ this.value }'`;
+             document.querySelector('label[for=search] input').checked=true
+             search( this.value )
+             document.querySelector('.space').click()
+            " placeholder="pesquisar espaços" name="search" required minlength="2" id="search">
+            <button onclick="
+             this.value=document.querySelector('input[type=search]').value; if (!( this.value.length>=3 )) return false;
+             document.querySelector('label[for=search] output').innerHTML = `'${ this.value }'`;
+             document.querySelector('label[for=search] input').checked=true
+             document.querySelector('.space').click()
+             search( this.value )
+            ">pesquisar</button>
+        </div>
+        <div class="space" onclick="setTimeout(()=>{document.querySelector('output#placeright').innerHTML=(search(document.querySelector('label:has(input:checked) output').innerHTML, undefined, 2)).toUpperCase();
+        document.querySelector('menu .icon').style.background = `url(${ document.querySelector('label:has(input:checked) img').src }) center no-repeat, var(--accent)`;document.querySelector('menu .icon').style.backgroundSize='90% 90%'
+        }, 50 )">
+            <label for="biblioteca"><input type="radio" name="space" id="biblioteca"><output>Biblioteca</output><img src="./image/library.png" alt=""></label>
+            <label for="cyber"><input type="radio" name="space" id="cyber"><output>Cyber-cafe</output><img src="./image/cyber.png" alt=""></label>
+            <label for="lixeira"><input type="radio" name="space" id="lixeira"><output>Lixeira</output><img src="./image/Delete.png" alt=""></label>
+            <label for="hotel"><input type="radio" name="space" id="hotel"><output>Hospedaria</output><img src="./image/Home.png" alt=""></label>
+            <label for="oficina"><input type="radio" name="space" id="oficina"><output>Oficina</output><img src="./image/Wrench.png" alt=""></label>
+            <label for="search"><input type="radio" name="space" id="search"><output>Search</output><img src="./image/findoculus.png" alt=""></label>
+        </div>
+        <p>
+            Websitre para pesquisas de espaços publicos e instituições via web baseada em um banco de dados adiministrativo
+        </p>
+        <menu class="local">
+            <header>
+           <i class="back" onclick="document.querySelector('input:checked').checked = false;"><</i>
+           <i class="icon"></i>
+            <h2><output id="placeright">BIBLIOTECAS</output> ENCONTRADAS POR PERTO</h2>
+            </header>
+            <main>
+                <!-- <i class="process"></i> -->
+                <!-- <p class="info"></p> -->
+                    </div>
+                </fieldset>
+            </main>
+        </menu>
+        <nav class="onplace" tabindex="1">
+            <header>
+                <input type="checkbox" class="none">
+                <i class="back" onclick="document.querySelector('.onplace input').click()"><</i>
+                <i class="icon"></i>
+                <h2>INFORMAÇÒES DO ESPAÇO <output id="placename">SEVENACADEMY</output></h2>
+            </header>
+          <i class="img"></i>
+          <main>
+            <i class="process"></i>
+        </main>
+        </nav>
+        <footer>
+            <a>Municipio de Belas</a>
+            <a>Clube de programadores</a>
+            <a href="./admin.html">painel de adiministrador</a>
+            <a href="https://appnewslite.onrender.com">AppNews lite</a>
+        </footer>
+</body>
+<script src="./script/index.js"></script>
+</html>
